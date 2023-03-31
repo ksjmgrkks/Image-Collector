@@ -7,9 +7,11 @@ import androidx.paging.cachedIn
 import com.kakaobank.core.data.SearchItem
 import com.kakaobank.core.data.SearchUiState
 import com.kakaobank.core.ui.BaseViewModel
+import com.kakaobank.core.util.IoDispatcher
 import com.kakaobank.domain.search.usecase.FirstSearchImagesUseCase
 import com.kakaobank.domain.search.usecase.SearchImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val searchImagesUseCase: SearchImagesUseCase,
-    private val firstSearchImagesUseCase: FirstSearchImagesUseCase
+    private val firstSearchImagesUseCase: FirstSearchImagesUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel() {
 
     // 상태(State)는 StateFlow, 이벤트(Event)는 SharedFlow
@@ -42,18 +45,22 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(currentQuery = query) }
         firstSearchImagesUseCase(
             query = query
-        ).cachedIn(viewModelScope).collect {
-            _firstPagingData.emit(it)
-        }
+        )
+            .flowOn(ioDispatcher)
+            .cachedIn(viewModelScope).collect {
+                _firstPagingData.emit(it)
+            }
     }
 
     /* 앞서 불러온 첫번째 페이지가 유저에게 보여질 동안 전체 이미지를 불러오는 함수 */
     fun searchImages() = viewModelScope.launch {
         searchImagesUseCase(
             query = _uiState.value.currentQuery
-        ).cachedIn(viewModelScope).collect {
-            _pagingData.emit(it)
-        }
+        )
+            .flowOn(ioDispatcher)
+            .cachedIn(viewModelScope).collect {
+                _pagingData.emit(it)
+            }
     }
 
     fun setProgressBar(isVisible: Boolean){
