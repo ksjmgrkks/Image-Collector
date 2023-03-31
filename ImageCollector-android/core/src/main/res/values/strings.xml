@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Image Collector</string>
+    <string name="title_search">검색</string>
+    <string name="title_bookmarks">내 보관함</string>
+
+    <string name="search_query_hint_message">검색어를 입력해주세요.</string>
+    <string name="search_guide_message">검색 후 이미지 클릭을 통해\n내 보관함에 이미지를 추가해보세요!</string>
+    <string name="search_loading_message">이미지를 검색중입니다…\n잠시만 기다려주세요</string>
+    <string name="search_state_retry">Retry</string>
+    <string name="search_paging_last_page_message">검색 결과를 모두 확인했습니다.</string>
+    <string name="search_paging_network_message">네트워크 연결을 확인해주세요.</string>
+    <string name="search_paging_no_search_message">검색 결과가 없습니다.</string>
+    <string name="search_paging_error_message">오류가 발생했습니다.</string>
+
+    <string name="bookmarks_do_not_have_image">해당 이미지가 보관함에 없습니다.</string>
+    <string name="bookmarks_add_image">해당 이미지가 북마크되었습니다.</string>
+    <string name="bookmarks_remove_image">해당 이미지를 보관함에서 제거하였습니다.</string>
+    <string name="bookmarks_remove_dialog_title">북마크 해제</string>
+    <string name="bookmarks_remove_dialog_description">해당 이미지를 내 보관함에서 제거하시겠습니까?</string>
+    <string name="bookmarks_remove_dialog_yes">예</string>
+    <string name="bookmarks_remove_dialog_no">아니오</string>
+    <string name="bookmarks_empty_bookmarks_message">내 보관함에 이미지가\n없습니다.</string>
+</resources>
