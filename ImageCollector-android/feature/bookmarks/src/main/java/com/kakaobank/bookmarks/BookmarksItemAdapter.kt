@@ -15,9 +15,10 @@ import com.kakaobank.core.data.SearchItem
 class BookmarksItemAdapter(
     private val onClick: (SearchItem, BookmarksItemAdapter) -> Unit
 ) : ListAdapter<SearchItem, BookmarksItemAdapter.BookmarksItemViewHolder>(diffUtil) {
-    inner class BookmarksItemViewHolder(
+    class BookmarksItemViewHolder(
         private val binding: ItemBookmarksBinding,
-        private val onClick: (SearchItem, BookmarksItemAdapter) -> Unit
+        private val onClick: (SearchItem, BookmarksItemAdapter) -> Unit,
+        private val adapter: BookmarksItemAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: SearchItem) {
             /* Glide 이미지 로딩 Progress */
@@ -34,7 +35,7 @@ class BookmarksItemAdapter(
                 .into(binding.imageViewBookmarks)
 
             binding.frameLayoutBookmarks.setOnClickListener {
-                onClick(item, this@BookmarksItemAdapter)
+                onClick(item, adapter)
             }
         }
     }
@@ -46,7 +47,8 @@ class BookmarksItemAdapter(
                 parent,
                 false
             ),
-            onClick = onClick
+            onClick = onClick,
+            adapter = this
         )
     }
 

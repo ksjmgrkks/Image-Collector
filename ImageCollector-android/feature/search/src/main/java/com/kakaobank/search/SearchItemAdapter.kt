@@ -18,27 +18,10 @@ import com.kakaobank.search.databinding.ItemSearchBinding
 class SearchItemAdapter(
     private val onClick : (SearchItem) -> Unit
 ) : PagingDataAdapter<SearchItem, SearchItemAdapter.SearchItemViewHolder>(ITEM_COMPARATOR) {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchItemViewHolder =
-        SearchItemViewHolder(
-            binding = ItemSearchBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false,
-            ),
-            onClick = onClick
-        )
-
-    override fun onBindViewHolder(holder: SearchItemViewHolder, position: Int) {
-        val item = getItem(position)
-        item?.run {
-            holder.bind(this, position)
-        }
-    }
-
-    inner class SearchItemViewHolder(
+    class SearchItemViewHolder(
         private val binding: ItemSearchBinding,
-        private val onClick: (SearchItem) -> Unit
+        private val onClick: (SearchItem) -> Unit,
+        private val adapter: SearchItemAdapter
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: SearchItem, position: Int) {
             binding.apply {
@@ -64,12 +47,30 @@ class SearchItemAdapter(
                 binding.cardViewSearch.setOnClickListener {
                     binding.lottieAnimationViewBookmark.playAnimation()
                     onClick(item)
-                    bookmarkChange(
+                    adapter.bookmarkChange(
                         item = item,
                         position = position
                     )
                 }
             }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchItemViewHolder =
+        SearchItemViewHolder(
+            binding = ItemSearchBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false,
+            ),
+            onClick = onClick,
+            adapter = this
+        )
+
+    override fun onBindViewHolder(holder: SearchItemViewHolder, position: Int) {
+        val item = getItem(position)
+        item?.run {
+            holder.bind(this, position)
         }
     }
 
