@@ -10,7 +10,6 @@ import retrofit2.http.Query
 interface SearchService {
     @GET("/v2/search/image")
     suspend fun searchImages(
-        @Header("Authorization") apiKey: String,
         @Query("sort") sort : String,
         @Query("query") query : String,
         @Query("page") page : Int,
@@ -19,7 +18,6 @@ interface SearchService {
 
     @GET("/v2/search/vclip")
     suspend fun searchVideos(
-        @Header("Authorization") apiKey: String,
         @Query("sort") sort : String,
         @Query("query") query : String,
         @Query("page") page : Int,

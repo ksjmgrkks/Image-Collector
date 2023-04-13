@@ -4,6 +4,7 @@ package com.kakaobank.imagecollector.di
 import android.app.Application
 import com.kakaobank.core.BuildConfig
 import com.kakaobank.core.util.Constants.BASE_URL
+import com.kakaobank.core.util.HeaderInterceptor
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -22,12 +23,14 @@ object RetrofitModule {
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient = OkHttpClient.Builder().apply {
-        retryOnConnectionFailure(true)
+        retryOnConnectionFailure(true) /* 연결에 문제 발생시 재시도 */
+        addInterceptor(HeaderInterceptor()) /* 인증키 초기 세팅 */
         addInterceptor(HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {
                 level = HttpLoggingInterceptor.Level.BODY
             }
-        })
+        }) /* 디버그 상태에서 http 통신 로깅 */
+
     }.build()
 
     @Provides

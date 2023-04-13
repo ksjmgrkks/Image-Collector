@@ -74,7 +74,6 @@ class SearchRepositoryImpl @Inject constructor(
         val mergedList = mutableListOf<SearchItem>()
         try {
             val imageResponse = service.searchImages(
-                apiKey = Constants.AUTH_HEADER,
                 sort = Constants.RECENCY_PARAM,
                 query = query,
                 page = 1,
@@ -84,7 +83,6 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
             val videoResponse = service.searchVideos(
-                apiKey = Constants.AUTH_HEADER,
                 sort = Constants.RECENCY_PARAM,
                 query = query,
                 page = 1,
@@ -123,7 +121,6 @@ class SearchRepositoryImpl @Inject constructor(
             /* 이미지 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
             while( imagePage <= Constants.IMAGE_API_PAGE_MAX && !imageIsEnd ){
                 val imageResponse = service.searchImages(
-                    apiKey = Constants.AUTH_HEADER,
                     sort = Constants.RECENCY_PARAM,
                     query = query,
                     page = imagePage,
@@ -140,7 +137,6 @@ class SearchRepositoryImpl @Inject constructor(
             /* 동영상 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
             while( videoPage <= Constants.VIDEO_API_PAGE_MAX && !videoIsEnd ){
                 val videoResponse = service.searchVideos(
-                    apiKey = Constants.AUTH_HEADER,
                     sort = Constants.RECENCY_PARAM,
                     query = query,
                     page = videoPage,
