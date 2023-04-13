@@ -21,23 +21,38 @@ class BookmarksFragment : BindingFragment<FragmentBookmarksBinding>(R.layout.fra
     private val adapter = BookmarksItemAdapter(
         /* 내 보관함 탭에서 아이템을 클릭했을 때 */
         onClick = { item, adapter ->
-            val builder = AlertDialog.Builder(requireContext())
-            builder.setTitle(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_title))
-                .setMessage(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_description))
-                .setPositiveButton(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_yes)) { _, _ ->
-                    if (requireContext().removeImageFromList(item)) {
-                        if(adapter.removeItem(item.imageUrl)){
-                            showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_remove_image))
-                            activityViewModel.removeImage(item.imageUrl)
-                            if(requireContext().getImageList(Constants.BOOKMARKED_LIST).size == 0)
-                                binding.textViewBookmarks.visibility = View.VISIBLE
-                        }else
-                            showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_do_not_have_image))
-                    } else
-                        showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_do_not_have_image))
-                }
-                .setNegativeButton(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_no)) { _, _ -> }
-            builder.show()
+            activity?.run {
+                /* Fragment가 attached된 Activity가 finishing 되는 상황이면 return */
+                if (isFinishing)
+                    return@run
+
+                val builder = AlertDialog.Builder(this)
+                builder.setTitle(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_title))
+                    .setMessage(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_description))
+                    .setPositiveButton(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_yes)) { _, _ ->
+                        if (removeImageFromList(item)) {
+                            if (adapter.removeItem(item.imageUrl)) {
+                                showToast(
+                                    this,
+                                    getString(com.kakaobank.core.R.string.bookmarks_remove_image)
+                                )
+                                activityViewModel.removeImage(item.imageUrl)
+                                if (getImageList(Constants.BOOKMARKED_LIST).size == 0)
+                                    binding.textViewBookmarks.visibility = View.VISIBLE
+                            } else
+                                showToast(
+                                    this,
+                                    getString(com.kakaobank.core.R.string.bookmarks_do_not_have_image)
+                                )
+                        } else
+                            showToast(
+                                this,
+                                getString(com.kakaobank.core.R.string.bookmarks_do_not_have_image)
+                            )
+                    }
+                    .setNegativeButton(getString(com.kakaobank.core.R.string.bookmarks_remove_dialog_no)) { _, _ -> }
+                builder.show()
+            }
         }
     )
 
@@ -45,12 +60,18 @@ class BookmarksFragment : BindingFragment<FragmentBookmarksBinding>(R.layout.fra
         super.onViewCreated(view, savedInstanceState)
         /* 초기 뷰 세팅 */
         binding.recyclerViewBookmarks.adapter = adapter
-        val bookmarksList = requireContext().getImageList(Constants.BOOKMARKED_LIST)
-        if (bookmarksList.size == 0)
-            binding.textViewBookmarks.visibility = View.VISIBLE
-        else
-            binding.textViewBookmarks.visibility = View.GONE
-        adapter.submitList(bookmarksList)
+        activity?.run {
+            /* Fragment가 attached된 Activity가 finishing 되는 상황이면 return */
+            if (isFinishing)
+                return@run
+
+            val bookmarksList = getImageList(Constants.BOOKMARKED_LIST)
+            if (bookmarksList.size == 0)
+                binding.textViewBookmarks.visibility = View.VISIBLE
+            else
+                binding.textViewBookmarks.visibility = View.GONE
+            adapter.submitList(bookmarksList)
+        }
 
         /* 검색 탭에서 아이템 추가시 북마크 화면 안내 메시지를 사라지게 하기위한 Observer */
         viewLifecycleOwner.lifecycleScope.launch {

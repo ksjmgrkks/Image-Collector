@@ -25,15 +25,27 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>(R.layout.fragment_
     private val viewModel: SearchViewModel by viewModels()
     private val adapter = SearchItemAdapter(
         onClick = {
-            if(it.bookmarked){
-                val result = requireContext().applicationContext.removeImageFromList(it)
-                if(result)
-                    showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_remove_image))
-                else
-                    showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_remove_image))
-            }else{
-                showToast(requireContext(), getString(com.kakaobank.core.R.string.bookmarks_add_image))
-                requireContext().addImageToList(it)
+            activity?.run {
+                /* Fragment가 attached된 Activity가 finishing 되는 상황이면 return */
+                if (isFinishing)
+                    return@run
+
+                if (it.bookmarked) {
+                    val result = applicationContext.removeImageFromList(it)
+                    if (result)
+                        showToast(
+                            this,
+                            getString(com.kakaobank.core.R.string.bookmarks_remove_image)
+                        )
+                    else
+                        showToast(
+                            this,
+                            getString(com.kakaobank.core.R.string.bookmarks_remove_image)
+                        )
+                } else {
+                    showToast(this, getString(com.kakaobank.core.R.string.bookmarks_add_image))
+                    addImageToList(it)
+                }
             }
         }
     )
