@@ -1,16 +1,17 @@
 package com.kakaobank.data.search.repository
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.kakaobank.core.data.SearchItem
 import com.kakaobank.core.util.Constants
+import com.kakaobank.core.util.IoDispatcher
 import com.kakaobank.data.search.remote.model.ApiMapper
 import com.kakaobank.data.search.remote.model.PagingModel
 import com.kakaobank.data.search.remote.paging.SearchItemPagingSource
 import com.kakaobank.data.search.remote.service.SearchService
 import com.kakaobank.domain.search.repository.SearchRepository
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -19,6 +20,7 @@ import javax.inject.Inject
 class SearchRepositoryImpl @Inject constructor(
     private val service: SearchService,
     private val apiMapper: ApiMapper,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): SearchRepository {
 
     /**
@@ -68,37 +70,50 @@ class SearchRepositoryImpl @Inject constructor(
      * 최신순(recency)으로 호출했기 때문에 첫번째 페이지가 가장 최신 데이터입니다.
      * @return 페이징 소스를 만드는데 필요한 정보를 담은 PagingModel
      */
-    private suspend fun firstMergeAndSortImagesWithVideos(service: SearchService,
-                                                          apiMapper: ApiMapper,
-                                                          query: String) : PagingModel {
-        val mergedList = mutableListOf<SearchItem>()
+    private suspend fun firstMergeAndSortImagesWithVideos(
+        service: SearchService,
+        apiMapper: ApiMapper,
+        query: String
+    ): PagingModel {
         try {
-            val imageResponse = service.searchImages(
-                sort = Constants.RECENCY_PARAM,
-                query = query,
-                page = 1,
-                size = Constants.IMAGE_API_SIZE_MAX)
-            for(item in imageResponse.documents.map { apiMapper.imageToSearchItem(it) }){
-                mergedList.add(item)
+            val pagingModel = withContext(ioDispatcher) {
+                val imageDeferred = async {
+                    service.searchImages(
+                        sort = Constants.RECENCY_PARAM,
+                        query = query,
+                        page = 1,
+                        size = Constants.IMAGE_API_SIZE_MAX
+                    )
+                }
+                val videoDeferred = async {
+                    service.searchVideos(
+                        sort = Constants.RECENCY_PARAM,
+                        query = query,
+                        page = 1,
+                        size = Constants.VIDEO_API_SIZE_MAX
+                    )
+                }
+                val imageResponse = imageDeferred.await() /* imageResponse 올 때까지 기다림 */
+                val videoResponse = videoDeferred.await() /* videoResponse 올 때까지 기다림 */
+
+                /* 2개의 Response를 다 받은 후 로직 수행 */
+                val mergedAndSortedList =
+                    imageResponse.documents.map { apiMapper.imageToSearchItem(it) } /* imageResponse to SearchItemList */
+                        .plus(videoResponse.documents.map { apiMapper.videoToSearchItem(it) }) /* videoResponse to SearchItemList + 두 리스트 합치기 */
+                        .sortedByDescending { /* 최신순으로 정렬 */
+                            OffsetDateTime.parse(
+                                it.datetime,
+                                DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                            )
+                        }
+                return@withContext PagingModel(
+                    searchItemList = mergedAndSortedList,
+                    totalSize = mergedAndSortedList.size,
+                    exception = null
+                )
             }
-
-            val videoResponse = service.searchVideos(
-                sort = Constants.RECENCY_PARAM,
-                query = query,
-                page = 1,
-                size = Constants.VIDEO_API_SIZE_MAX)
-            for(item in videoResponse.documents.map { apiMapper.videoToSearchItem(it) }){
-                mergedList.add(item)
-            }
-
-            val mergedAndSortedList = mergedList.sortedByDescending { OffsetDateTime.parse(it.datetime, DateTimeFormatter.ISO_OFFSET_DATE_TIME) }
-
-            return PagingModel(
-                searchItemList = mergedAndSortedList,
-                totalSize = mergedAndSortedList.size,
-                exception = null
-            )
-        } catch(e: Exception){
+            return pagingModel
+        } catch (e: Exception) {
             return PagingModel(
                 searchItemList = listOf(),
                 totalSize = 0,
