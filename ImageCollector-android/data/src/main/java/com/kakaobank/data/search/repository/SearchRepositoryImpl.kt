@@ -76,6 +76,7 @@ class SearchRepositoryImpl @Inject constructor(
     ): PagingModel {
         try {
             val pagingModel = coroutineScope {
+                /* async-await을 활용함으로써 값을 반환하는 병렬 처리 수행 */
                 val imageDeferred = async {
                     service.searchImages(
                         sort = Constants.RECENCY_PARAM,
@@ -128,47 +129,69 @@ class SearchRepositoryImpl @Inject constructor(
     private suspend fun mergeAndSortImagesWithVideos(service: SearchService,
                                               apiMapper: ApiMapper,
                                               query: String) : PagingModel {
-        val mergedList = mutableListOf<SearchItem>()
+
         try {
-            var imagePage = 1
-            var imageIsEnd = false
-            /* 이미지 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
-            while( imagePage <= Constants.IMAGE_API_PAGE_MAX && !imageIsEnd ){
-                val imageResponse = service.searchImages(
-                    sort = Constants.RECENCY_PARAM,
-                    query = query,
-                    page = imagePage,
-                    size = Constants.IMAGE_API_SIZE_MAX)
-                for(item in imageResponse.documents.map { apiMapper.imageToSearchItem(it) }){
-                    mergedList.add(item)
+            val pagingModel = coroutineScope {
+                /* async-await을 활용함으로써 값을 반환하는 병렬 처리 수행 */
+                val imageDeferred = async {
+                    val imageList = mutableListOf<SearchItem>()
+                    var imagePage = 1
+                    var imageIsEnd = false
+                    /* 이미지 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
+                    while( imagePage <= Constants.IMAGE_API_PAGE_MAX && !imageIsEnd ){
+                        val imageResponse = service.searchImages(
+                            sort = Constants.RECENCY_PARAM,
+                            query = query,
+                            page = imagePage,
+                            size = Constants.IMAGE_API_SIZE_MAX)
+                        for(item in imageResponse.documents.map { apiMapper.imageToSearchItem(it) }){
+                            imageList.add(item)
+                        }
+                        imageIsEnd = imageResponse.meta.isEnd
+                        imagePage++
+                    }
+                    imageList/* 리턴 값 */
                 }
-                imageIsEnd = imageResponse.meta.isEnd
-                imagePage++
-            }
 
-            var videoPage = 1
-            var videoIsEnd = false
-            /* 동영상 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
-            while( videoPage <= Constants.VIDEO_API_PAGE_MAX && !videoIsEnd ){
-                val videoResponse = service.searchVideos(
-                    sort = Constants.RECENCY_PARAM,
-                    query = query,
-                    page = videoPage,
-                    size = Constants.VIDEO_API_SIZE_MAX)
-                for(item in videoResponse.documents.map { apiMapper.videoToSearchItem(it) }){
-                    mergedList.add(item)
+                val videoDeferred = async {
+                    val videoList = mutableListOf<SearchItem>()
+                    var videoPage = 1
+                    var videoIsEnd = false
+                    /* 동영상 검색 API에서 호출할 수 있는 최대 데이터까지 부르거나 마지막 페이지일때 까지 api 호출하기 */
+                    while( videoPage <= Constants.VIDEO_API_PAGE_MAX && !videoIsEnd ){
+                        val videoResponse = service.searchVideos(
+                            sort = Constants.RECENCY_PARAM,
+                            query = query,
+                            page = videoPage,
+                            size = Constants.VIDEO_API_SIZE_MAX)
+                        for(item in videoResponse.documents.map { apiMapper.videoToSearchItem(it) }){
+                            videoList.add(item)
+                        }
+                        videoIsEnd = videoResponse.meta.isEnd
+                        videoPage++
+                    }
+                    videoList/* 리턴 값 */
                 }
-                videoIsEnd = videoResponse.meta.isEnd
-                videoPage++
+
+                val totalImageList = imageDeferred.await()
+                val totalVideoList = videoDeferred.await()
+
+                /* 2개의 Response를 다 받은 후 로직 수행 */
+                val mergedAndSortedList =
+                    totalImageList.plus(totalVideoList) /* 두 리스트 합치기 */
+                        .sortedByDescending { /* 최신순으로 정렬 */
+                            OffsetDateTime.parse(
+                                it.datetime,
+                                DateTimeFormatter.ISO_OFFSET_DATE_TIME
+                            )
+                        }
+                return@coroutineScope PagingModel(
+                    searchItemList = mergedAndSortedList,
+                    totalSize = mergedAndSortedList.size,
+                    exception = null
+                )
             }
-
-            val mergedAndSortedList = mergedList.sortedByDescending { OffsetDateTime.parse(it.datetime, DateTimeFormatter.ISO_OFFSET_DATE_TIME) }
-
-            return PagingModel(
-                searchItemList = mergedAndSortedList,
-                totalSize = mergedAndSortedList.size,
-                exception = null
-            )
+            return pagingModel
         } catch(e: Exception){
             return PagingModel(
                 searchItemList = listOf(),
@@ -177,5 +200,4 @@ class SearchRepositoryImpl @Inject constructor(
             )
         }
     }
-
 }
