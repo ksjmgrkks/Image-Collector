@@ -20,7 +20,6 @@ import javax.inject.Inject
 class SearchRepositoryImpl @Inject constructor(
     private val service: SearchService,
     private val apiMapper: ApiMapper,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): SearchRepository {
 
     /**
@@ -76,7 +75,7 @@ class SearchRepositoryImpl @Inject constructor(
         query: String
     ): PagingModel {
         try {
-            val pagingModel = withContext(ioDispatcher) {
+            val pagingModel = coroutineScope {
                 val imageDeferred = async {
                     service.searchImages(
                         sort = Constants.RECENCY_PARAM,
@@ -106,7 +105,7 @@ class SearchRepositoryImpl @Inject constructor(
                                 DateTimeFormatter.ISO_OFFSET_DATE_TIME
                             )
                         }
-                return@withContext PagingModel(
+                return@coroutineScope PagingModel(
                     searchItemList = mergedAndSortedList,
                     totalSize = mergedAndSortedList.size,
                     exception = null
