@@ -172,13 +172,11 @@ class SearchRepositoryImpl @Inject constructor(
                     }
                     videoList/* 리턴 값 */
                 }
-
-                val totalImageList = imageDeferred.await()
-                val totalVideoList = videoDeferred.await()
+                val totalList = awaitAll(imageDeferred, videoDeferred)
 
                 /* 2개의 Response를 다 받은 후 로직 수행 */
                 val mergedAndSortedList =
-                    totalImageList.plus(totalVideoList) /* 두 리스트 합치기 */
+                    totalList[0].plus(totalList[1]) /* 두 리스트 합치기 */
                         .sortedByDescending { /* 최신순으로 정렬 */
                             OffsetDateTime.parse(
                                 it.datetime,
