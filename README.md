@@ -43,8 +43,8 @@
 #### app : DI, Application, MainActivity 클래스와 필요한 리소스들을 포함하고, 전체 모듈이 모여 앱이 빌드되는 모듈입니다.
 #### buildSrc : 빌드 관련 변수들을 모아놓은 모듈입니다.
 #### core : 각 모듈에서 공통으로 필요한 클래스와 리소스를 모아놓은 모듈입니다. 
-#### data : 네트워크로부터 데이터를 받아 가공하는 비즈니스 로직이 포함되며, 가공 후 도메인 계층에 검색 데이터를 전달하는 Data Layer 모듈입니다.
-#### domain : Use Case를 분리하고, Data Layer 모듈과 UI Layer 모듈의 의존성을 분리하는 Domain Layer 모듈입니다.
+#### data : 네트워크로부터 데이터를 받아 가공하는 비즈니스 로직이 포함되며,<br/>　　　가공 후 도메인 계층에 검색 데이터를 전달하는 Data Layer 모듈입니다.
+#### domain : Use Case를 분리하고, Data Layer 모듈과 UI Layer 모듈의 의존성을 분리하고,<br/>　　　　저수준 모듈(UI, Data)의 추상화 모듈인 Domain Layer 모듈입니다. (고수준 모듈)
 #### feature-search : 검색 탭 관련 UI 클래스와 레이아웃을 모아놓은 UI Layer 모듈입니다.
 #### feature-bookmarks : 내 보관함 탭 관련 UI 클래스와 레이아웃을 모아놓은 UI Layer 모듈입니다.
 </br>
