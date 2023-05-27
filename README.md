@@ -29,12 +29,14 @@
 </br>
 
 ## *****Architecture & Modularization*****
-#### https://developer.android.com/topic/architecture를 참고하여 멀티 모듈로 앱을 디자인했고,
-#### 관심사의 분리를 통해 코드의 복잡성을 줄일 수 있었고, Hilt를 통한 의존성 주입 구현을 통해 클래스 간 의존 관계를 분리해 유지 보수가 편해졌습니다.
-#### 검색 데이터의 경우 단방향 데이터 흐름(UDF) 원칙을 최대한 지켜 데이터의 일관성을 보장했습니다.
-<img src="https://user-images.githubusercontent.com/76638683/229058547-4400fd13-0973-4197-a622-2fdb9f9a830a.png"  width="510" height="300"/>
+#### Clean Architecture를 참고하여 멀티 모듈로 앱을 디자인했고,
+#### 관심사의 분리를 통해 코드의 복잡성을 줄일 수 있었고,
+#### Hilt를 통한 의존성 주입 구현을 통해 클래스 간 의존 관계를 분리해 유지 보수가 편해졌습니다.
+#### 저수준 모듈(구체적 모듈)인 UI Layer와 Data Layer가 고수준 모듈(추상적 모듈)인 Domain Layer에 의존하도록 구현해서
+#### 고수준 모듈이 저수준 모듈에 영향을 받지 않게 해 유지 보수 및 확장에 용이하도록 설계했습니다. (SOLID 원칙 중 DIP)
+![clean-architecture-overview](https://github.com/ksjmgrkks/Image-Collector/assets/76638683/ef301323-cb52-423e-9ae0-ba2a95b99957)
 </br>
-
+</br>
 
 ## *****Description of each module*****
 #### app : DI, Application, MainActivity 클래스와 필요한 리소스들을 포함하고, 전체 모듈이 모여 앱이 빌드되는 모듈입니다.
@@ -50,3 +52,4 @@
 #### JUnit와 Mockito 라이브러리를 이용해 SharedPreferences를 사용하는 Util 파일의 함수들에 대해
 #### UtilTest 클래스에 테스트 코드를 작성했습니다. 테스트 함수의 네이밍 컨벤션을 지키고,
 #### 테스트 함수 내부를 Given, When, Then 세 부분으로 나누어 읽기 편하도록 작성했습니다.
+</br></br>
