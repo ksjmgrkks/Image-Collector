@@ -29,11 +29,12 @@
 </br>
 
 ## *****Architecture & Modularization*****
-#### Clean Architecture를 참고하여 멀티 모듈로 앱을 디자인했고,
-#### 관심사의 분리를 통해 코드의 복잡성을 줄일 수 있었고,
+#### Clean Architecture를 참고하여 멀티 모듈로 앱을 설계했고,
+#### 관심사의 분리(UI, Domain, Data 등)를 통해 코드의 복잡성을 줄일 수 있었고,
 #### Hilt를 통한 의존성 주입 구현을 통해 클래스 간 의존 관계를 분리해 유지 보수가 편해졌습니다.
-#### 저수준 모듈(구체적 모듈)인 UI Layer와 Data Layer가 고수준 모듈(추상적 모듈)인 Domain Layer에 의존하도록 구현해서
-#### 고수준 모듈이 저수준 모듈에 영향을 받지 않게 해 유지 보수 및 확장에 용이하도록 설계했습니다. (SOLID 원칙 중 DIP)
+#### 저수준 모듈(구체적 모듈)인 UI Layer와 Data Layer가 고수준 모듈(추상적 모듈)인 Domain Layer에
+#### 의존하도록 구현해서 고수준 모듈이 저수준 모듈에 영향을 받지 않게 해
+#### 유지 보수 및 확장에 용이하도록 설계했습니다. (SOLID 원칙 중 DIP)
 ![clean-architecture-overview](https://github.com/ksjmgrkks/Image-Collector/assets/76638683/ef301323-cb52-423e-9ae0-ba2a95b99957)
 </br>
 </br>
