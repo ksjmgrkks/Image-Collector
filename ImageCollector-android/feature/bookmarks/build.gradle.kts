@@ -9,14 +9,12 @@ dependencies {
     "implementation"(DaggerHilt.hiltAndroid)
     "kapt"(DaggerHilt.hiltCompiler)
 
-    "implementation"(project(Modules.core))
-    "implementation"(project(Modules.domain))
-
     "implementation"(AndroidX.coreKtx)
     "implementation"(AndroidX.appCompat)
     "implementation"(AndroidX.navigationFragment)
     "implementation"(AndroidX.navigationUi)
     "implementation"(AndroidX.swiperefreshlayout)
+
     "implementation"(Google.material)
 
     "implementation"(Paging.pagingRuntime)
