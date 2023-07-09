@@ -37,14 +37,14 @@ android {
 }
 
 dependencies {
-    implementation(DaggerHilt.hiltAndroid)
-    kapt(DaggerHilt.hiltCompiler)
-
     implementation(project(Modules.domain))
     implementation(project(Modules.data))
     implementation(project(Modules.core))
     implementation(project(Modules.featureSearch))
     implementation(project(Modules.featureBookmarks))
+
+    implementation(DaggerHilt.hiltAndroid)
+    kapt(DaggerHilt.hiltCompiler)
 
     implementation(AndroidX.coreKtx)
     implementation(AndroidX.appCompat)
@@ -58,6 +58,7 @@ dependencies {
 
     implementation(Moshi.moshiKotlin)
     implementation(Moshi.moshiCodegen)
+
     implementation(Retrofit.okHttp)
     implementation(Retrofit.retrofit)
     implementation(Retrofit.okHttpLoggingInterceptor)
