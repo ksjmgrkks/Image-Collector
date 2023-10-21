@@ -38,8 +38,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
+import com.kks.bookmarks.navigation.bookmarkNavGraph
+import com.kks.search.navigation.searchNavGraph
 import kotlinx.coroutines.launch
-import java.net.UnknownHostException
 
 @Composable
 internal fun MainScreen(
@@ -49,14 +50,11 @@ internal fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val localContextResource = LocalContext.current.resources
-    val onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { throwable ->
+    val onShowSnackBar: (message: String?) -> Unit = { message ->
         coroutineScope.launch {
-            snackBarHostState.showSnackbar(
-                when (throwable) {
-                    is UnknownHostException -> localContextResource.getString(com.kks.core.R.string.search_paging_error_message)
-                    else -> localContextResource.getString(com.kks.core.R.string.search_paging_error_message)
-                }
-            )
+            message?.run {
+                snackBarHostState.showSnackbar(this)
+            }
         }
     }
 
@@ -74,12 +72,12 @@ internal fun MainScreen(
                         padding = padding,
                         onSessionClick = { navigator.navigateSession() },
                         onContributorClick = { navigator.navigateContributor() },
-                        onShowErrorSnackBar = onShowErrorSnackBar
+                        onShowSnackBar = onShowSnackBar
                     )
                     bookmarkNavGraph(
                         onBackClick = navigator::popBackStackIfNotHome,
                         onSessionClick = { navigator.navigateSessionDetail(it.id) },
-                        onShowErrorSnackBar = onShowErrorSnackBar
+                        onShowSnackBar = onShowSnackBar
                     )
                 }
             }
