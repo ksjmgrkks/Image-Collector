@@ -1,5 +1,5 @@
 object ProjectConfig {
-    const val appId = "com.kakaobank.imagecollector"
+    const val appId = "com.kks.imagecollector"
     const val compileSdk = 33
     const val minSdk = 26
     const val targetSdk = 33
