@@ -8,7 +8,10 @@ import androidx.lifecycle.lifecycleScope
 import com.kks.bookmarks.databinding.FragmentBookmarksBinding
 import com.kks.core.ui.ActivityViewModel
 import com.kks.core.ui.BindingFragment
-import com.kks.core.util.*
+import com.kks.core.util.Constants
+import com.kks.core.util.getImageList
+import com.kks.core.util.removeImageFromList
+import com.kks.core.util.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

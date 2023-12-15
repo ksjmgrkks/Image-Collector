@@ -55,10 +55,10 @@ class BookmarksItemAdapter(
         holder.bind(currentList[position])
     }
 
-    fun removeItem(imageUrl: String) : Boolean {
+    fun removeItem(imageUrl: String): Boolean {
         val newList = currentList.toMutableList()
         newList.forEachIndexed { index, item ->
-            if(item.imageUrl == imageUrl){
+            if (item.imageUrl == imageUrl) {
                 newList.removeAt(index)
                 submitList(newList)
                 return true

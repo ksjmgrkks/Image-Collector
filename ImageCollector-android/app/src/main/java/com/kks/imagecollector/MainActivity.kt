@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS) // 상태 표시줄 글자 색 변경
     }
 
-    private fun setNavigation(){
+    private fun setNavigation() {
         val navView: BottomNavigationView = binding.bottomNavigationView
         val navController = findNavController(R.id.fragment_nav_host)
         val appBarConfiguration = AppBarConfiguration(

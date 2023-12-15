@@ -14,7 +14,7 @@ import com.kks.core.data.datetimeText
 import com.kks.search.databinding.ItemSearchBinding
 
 class SearchItemAdapter(
-    private val onClick : (SearchItem) -> Unit
+    private val onClick: (SearchItem) -> Unit
 ) : PagingDataAdapter<SearchItem, SearchItemAdapter.SearchItemViewHolder>(ITEM_COMPARATOR) {
     class SearchItemViewHolder(
         private val binding: ItemSearchBinding,
@@ -36,9 +36,9 @@ class SearchItemAdapter(
                     .placeholder(circularProgressDrawable)
                     .into(binding.imageViewSearch)
 
-                if(item.bookmarked){
+                if (item.bookmarked) {
                     binding.lottieAnimationViewBookmark.visibility = View.VISIBLE
-                }else{
+                } else {
                     binding.lottieAnimationViewBookmark.visibility = View.GONE
                 }
 
@@ -72,22 +72,22 @@ class SearchItemAdapter(
         }
     }
 
-    fun bookmarkChange(item: SearchItem, position: Int){
+    fun bookmarkChange(item: SearchItem, position: Int) {
         val snapshotSearchItem = this@SearchItemAdapter.snapshot().firstOrNull { snapshotItem ->
             snapshotItem?.imageUrl == item.imageUrl
         }
-        if(snapshotSearchItem != null) {
+        if (snapshotSearchItem != null) {
             snapshotSearchItem.bookmarked = !snapshotSearchItem.bookmarked
             this@SearchItemAdapter.notifyItemChanged(position)
         }
     }
 
-    fun bookmarkChange(imageUrl: String){
+    fun bookmarkChange(imageUrl: String) {
         val snapshotSearchItem = this@SearchItemAdapter.snapshot().firstOrNull { snapshotItem ->
             snapshotItem?.imageUrl == imageUrl
         }
 
-        if(snapshotSearchItem != null) {
+        if (snapshotSearchItem != null) {
             val position = this@SearchItemAdapter.snapshot().indexOf(snapshotSearchItem)
             snapshotSearchItem.bookmarked = !snapshotSearchItem.bookmarked
             this@SearchItemAdapter.notifyItemChanged(position)

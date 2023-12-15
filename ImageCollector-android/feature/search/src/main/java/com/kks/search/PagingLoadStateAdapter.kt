@@ -14,9 +14,18 @@ class PagingLoadStateAdapter(
     private val isLastPageCallback: (Boolean) -> Unit
 ) : LoadStateAdapter<PagingLoadStateViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): PagingLoadStateViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        loadState: LoadState
+    ): PagingLoadStateViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return PagingLoadStateViewHolder(ItemLoadStateBinding.inflate(layoutInflater, parent, false), retryCallback, isLastPageCallback)
+        return PagingLoadStateViewHolder(
+            ItemLoadStateBinding.inflate(
+                layoutInflater,
+                parent,
+                false
+            ), retryCallback, isLastPageCallback
+        )
     }
 
     override fun onBindViewHolder(holder: PagingLoadStateViewHolder, loadState: LoadState) {
@@ -33,15 +42,17 @@ class PagingLoadStateViewHolder(
     /* Paging Error시 아이템에서 보여줄 View */
     fun bind(state: LoadState) {
         binding.buttonRetry.setOnClickListener { retry() }
-        when(state){
+        when (state) {
             is LoadState.Loading -> {
                 binding.progressBarLoading.visibility = View.VISIBLE
             }
+
             is LoadState.Error -> {
                 binding.buttonRetry.visibility = View.VISIBLE
                 binding.progressBarLoading.visibility = View.GONE
                 Log.d(this.javaClass.name, state.error.message ?: "")
             }
+
             else -> {
                 binding.buttonRetry.visibility = View.GONE
                 binding.progressBarLoading.visibility = View.GONE

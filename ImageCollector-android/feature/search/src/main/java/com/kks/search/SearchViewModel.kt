@@ -11,7 +11,12 @@ import com.kks.domain.search.usecase.FirstSearchImagesUseCase
 import com.kks.domain.search.usecase.SearchImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -50,8 +55,9 @@ class SearchViewModel @Inject constructor(
             query = query
         )
             .flowOn(ioDispatcher)
-            .cachedIn(viewModelScope).collect {
-                _firstPagingData.emit(it)
+            .cachedIn(viewModelScope).collect { pagingData ->
+                _firstPagingData.emit(pagingData)
+                _uiState.update { it.copy(isLoading = false) }
             }
     }
 
@@ -66,11 +72,7 @@ class SearchViewModel @Inject constructor(
             }
     }
 
-    fun setProgressBar(isVisible: Boolean){
-        if(isVisible){
-            _uiState.update { it.copy(isLoading = true) }
-        }else{
-            _uiState.update { it.copy(isLoading = false) }
-        }
+    fun stopProcess() {
+        _uiState.update { it.copy(isLoading = false) }
     }
 }

@@ -48,7 +48,7 @@ class SearchItemPagingSource(
      */
     private fun fetchImagesByPage(data: PagingModel, page: Int): List<SearchItem> {
         val chunkedList = data.searchItemList.chunked(Constants.PAGE_SIZE)
-        Log.d("[kks]","chunkedList 총 묶음 개수: ${chunkedList.size}")
+        Log.d("[kks]", "chunkedList 총 묶음 개수: ${chunkedList.size}")
         return chunkedList[page - 1]
     }
 
@@ -56,8 +56,8 @@ class SearchItemPagingSource(
      * [listSize]와 한 페이지에 담긴 SearchItem의 개수를 바탕으로 전체 페이지 수를 계산하는 함수입니다.
      * @return 전체 페이지 수(Int)
      */
-    private fun calculateTotalPage(listSize: Int) : Int {
-        Log.d("[kks]","Page 개수 == chunkedList 총 묶음 개수: ${(listSize / Constants.PAGE_SIZE) + 1}")
+    private fun calculateTotalPage(listSize: Int): Int {
+        Log.d("[kks]", "Page 개수 == chunkedList 총 묶음 개수: ${(listSize / Constants.PAGE_SIZE) + 1}")
         return (listSize / Constants.PAGE_SIZE) + 1
     }
 }
