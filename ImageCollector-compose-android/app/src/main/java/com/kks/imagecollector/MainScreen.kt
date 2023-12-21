@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import com.kks.bookmarks.navigation.bookmarkNavGraph
 import com.kks.search.navigation.searchNavGraph
-import kotlinx.coroutines.launch
 
 @Composable
 internal fun MainScreen(
@@ -50,13 +49,6 @@ internal fun MainScreen(
 
     val coroutineScope = rememberCoroutineScope()
     val localContextResource = LocalContext.current.resources
-    val onShowSnackBar: (message: String?) -> Unit = { message ->
-        coroutineScope.launch {
-            message?.run {
-                snackBarHostState.showSnackbar(this)
-            }
-        }
-    }
 
     Scaffold(
         content = { padding ->
@@ -70,14 +62,10 @@ internal fun MainScreen(
                 ) {
                     searchNavGraph(
                         padding = padding,
-                        onSessionClick = { navigator.navigateSession() },
-                        onContributorClick = { navigator.navigateContributor() },
-                        onShowSnackBar = onShowSnackBar
+                        onShowToast = { message -> }
                     )
                     bookmarkNavGraph(
-                        onBackClick = navigator::popBackStackIfNotHome,
-                        onSessionClick = { navigator.navigateSessionDetail(it.id) },
-                        onShowSnackBar = onShowSnackBar
+                        onShowToast = { message -> }
                     )
                 }
             }

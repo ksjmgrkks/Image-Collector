@@ -13,16 +13,12 @@ fun NavController.navigateSearch(navOptions: NavOptions) {
 
 fun NavGraphBuilder.searchNavGraph(
     padding: PaddingValues,
-    onSessionClick: () -> Unit,
-    onContributorClick: () -> Unit,
-    onShowSnackBar: (message: String?) -> Unit
+    onShowToast: (message: String) -> Unit
 ) {
     composable(route = SearchRoute.route) {
         SearchRoute(
             padding,
-            onSessionClick,
-            onContributorClick,
-            onShowSnackBar
+            onShowToast
         )
     }
 }

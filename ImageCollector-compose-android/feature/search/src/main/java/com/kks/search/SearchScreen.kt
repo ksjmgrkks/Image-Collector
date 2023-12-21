@@ -17,22 +17,15 @@ import com.kks.core.data.SearchUiState
 @Composable
 internal fun SearchRoute(
     padding: PaddingValues,
-    onSessionClick: () -> Unit,
-    onContributorClick: () -> Unit,
-    onShowSnackBar: (message: String?) -> Unit,
+    onShowToast: (message: String) -> Unit,
     viewModel: SearchViewModel = hiltViewModel()
 ) {
     val searchUiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-//    LaunchedEffect(true) {
-//        viewModel.errorFlow.collectLatest { throwable -> onShowSnackBar(throwable) }
-//    }
-
     SearchScreen(
         padding = padding,
         searchUiState = searchUiState,
-        onSessionClick = onSessionClick,
-        onContributorClick = onContributorClick,
+        onShowToast = onShowToast
     )
 }
 
@@ -40,8 +33,7 @@ internal fun SearchRoute(
 private fun SearchScreen(
     padding: PaddingValues,
     searchUiState: SearchUiState,
-    onSessionClick: () -> Unit,
-    onContributorClick: () -> Unit,
+    onShowToast: (message: String) -> Unit
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -52,8 +44,6 @@ private fun SearchScreen(
             .padding(bottom = 4.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SessionCard(onClick = onSessionClick)
-        ContributorCard(onClick = onContributorClick)
-        SponsorCard(uiState = searchUiState)
+
     }
 }

@@ -1,5 +1,8 @@
 package com.kks.imagecollector
 
+import com.kks.bookmarks.navigation.BookmarkRoute
+import com.kks.search.navigation.SearchRoute
+
 internal enum class MainTab(
     val iconResId: Int,
     internal val contentDescription: String,

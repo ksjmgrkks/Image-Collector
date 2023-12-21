@@ -8,6 +8,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.kks.bookmarks.navigation.navigateBookmark
+import com.kks.search.navigation.SearchRoute
+import com.kks.search.navigation.navigateSearch
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -16,7 +19,7 @@ internal class MainNavigator(
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination
 
-    val startDestination = MainTab.HOME.route
+    val startDestination = MainTab.SEARCH.route
 
     val currentTab: MainTab?
         @Composable get() = currentDestination
@@ -33,36 +36,19 @@ internal class MainNavigator(
         }
 
         when (tab) {
-            MainTab.SETTING -> navController.navigateSetting(navOptions)
-            MainTab.HOME -> navController.navigateHome(navOptions)
+            MainTab.SEARCH -> navController.navigateSearch(navOptions)
             MainTab.BOOKMARK -> navController.navigateBookmark(navOptions)
         }
     }
-
-    fun navigateContributor() {
-        navController.navigateContributor()
-    }
-
-    fun navigateSession() {
-        navController.navigateSession()
-    }
-
-    fun navigateSessionDetail(sessionId: String) {
-        navController.navigateSessionDetail(sessionId)
-    }
-
     fun popBackStack() {
         navController.popBackStack()
     }
 
     fun popBackStackIfNotHome() {
-        if (!isSameCurrentDestination(HomeRoute.route)) {
+        if (navController.currentDestination?.route != SearchRoute.route) {
             popBackStack()
         }
     }
-
-    private fun isSameCurrentDestination(route: String) =
-        navController.currentDestination?.route == route
 
     @Composable
     fun shouldShowBottomBar(): Boolean {
